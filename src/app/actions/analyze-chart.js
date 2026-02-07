@@ -2,25 +2,41 @@
 
 export async function analyzeChartImage(imageBase64) {
     try {
-        // Client-side validation using image dimensions
+        // STEP 1: Basic Validation
         const base64Data = imageBase64.split(',')[1];
         const mimeType = imageBase64.split(';')[0].split(':')[1];
 
-        // Decode base64 to get image size (rough estimate)
-        const sizeInBytes = (base64Data.length * 3) / 4;
-
-        // Basic validation: reject very small images
-        if (sizeInBytes < 10000) {
+        // File type check
+        if (!mimeType.startsWith('image/')) {
             return {
                 isChart: false,
-                error: "Image too small. Please upload a clear chart screenshot (minimum 50KB)."
+                error: "Invalid file type. Please upload an image file (PNG, JPG, or WebP)."
             };
         }
 
-        // Simulate processing delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Size validation
+        const sizeInBytes = (base64Data.length * 3) / 4;
+        if (sizeInBytes < 50000) {
+            return {
+                isChart: false,
+                error: "Image too small. Please upload a clear chart screenshot (minimum 200KB)."
+            };
+        }
+        if (sizeInBytes > 10000000) {
+            return {
+                isChart: false,
+                error: "Image too large. Please compress your screenshot to under 10MB."
+            };
+        }
 
-        // Generate randomized but realistic analysis
+        // Simulate validation delay
+        await new Promise(resolve => setTimeout(resolve, 2500));
+
+        // STEP 2-4: Advanced validation happens client-side
+        // This is a placeholder - actual validation done in ChartAnalyzer component
+        // Server just does basic checks and generates analysis
+
+        // Generate realistic randomized analysis
         const signals = ['BUY', 'SELL', 'NEUTRAL'];
         const signal = signals[Math.floor(Math.random() * signals.length)];
         const confidence = (75 + Math.floor(Math.random() * 20)) + '%';

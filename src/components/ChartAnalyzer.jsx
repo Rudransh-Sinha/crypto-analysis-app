@@ -47,7 +47,19 @@ const ChartAnalyzer = () => {
         setAnalyzing(true);
 
         try {
-            // Call Server Action (Gemini AI)
+            // STEP 1-4: Client-side Chart Validation
+            const { validateChartImage } = await import('@/utils/chartValidator');
+            const validation = await validateChartImage(image);
+
+            console.log('Validation result:', validation);
+
+            if (!validation.isValid) {
+                setAnalyzing(false);
+                setError(validation.reason + (validation.checks ? '\n\nValidation checks:\n' + validation.checks.join('\n') : ''));
+                return;
+            }
+
+            // Validation passed - proceed with analysis
             const response = await analyzeChartImage(image);
 
             setAnalyzing(false);
@@ -70,7 +82,8 @@ const ChartAnalyzer = () => {
                 entry: response.entry,
                 sl: response.sl,
                 tp: response.tp,
-                strategies: response.strategies
+                strategies: response.strategies,
+                validationScore: validation.confidence
             });
 
         } catch (err) {
@@ -211,7 +224,7 @@ const ChartAnalyzer = () => {
                                             >
                                                 <Zap size={20} className="fill-current" />
                                             </motion.div>
-                                            Initializing Neural Engine...
+                                            Validating chart image...
                                         </>
                                     ) : (
                                         <>
