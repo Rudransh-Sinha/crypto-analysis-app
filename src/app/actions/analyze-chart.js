@@ -39,7 +39,7 @@ export async function analyzeChartImage(imageBase64) {
 
         // STEP 3: Initialize Gemini
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         // STEP 4: Prepare Image
         const imagePart = {
