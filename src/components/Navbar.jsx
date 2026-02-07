@@ -9,6 +9,7 @@ const Navbar = () => {
     const { data: session } = useSession();
     const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const NavLink = ({ href, icon, label, onClick }) => {
         const isActive = pathname === href;
