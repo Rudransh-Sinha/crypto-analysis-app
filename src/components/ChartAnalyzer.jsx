@@ -1,4 +1,5 @@
 "use client";
+import { analyzeChartImage } from '@/app/actions/analyze-chart';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, Zap, TrendingUp, AlertTriangle, Lock, X, CheckCircle2, BarChart2, Hash } from 'lucide-react';
@@ -12,6 +13,7 @@ const ChartAnalyzer = () => {
     const [result, setResult] = useState(null);
     const [usageCount, setUsageCount] = useState(0);
     const [showLimitModal, setShowLimitModal] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const stored = localStorage.getItem('analysis_usage');
@@ -25,6 +27,7 @@ const ChartAnalyzer = () => {
             reader.onloadend = () => {
                 setImage(reader.result);
                 setResult(null);
+                setError(null);
             };
             reader.readAsDataURL(file);
         }
@@ -32,6 +35,8 @@ const ChartAnalyzer = () => {
 
     const analyzeChart = async () => {
         if (!image) return;
+        setError(null);
+        setResult(null);
 
         // FREEMIUM LOGIC
         if (!session && usageCount >= 3) {
@@ -41,11 +46,18 @@ const ChartAnalyzer = () => {
 
         setAnalyzing(true);
 
-        // Simulate AI Analysis
-        setTimeout(() => {
+        try {
+            // Call Server Action (Gemini AI)
+            const response = await analyzeChartImage(image);
+
             setAnalyzing(false);
 
-            // Increment local usage if not signed in
+            if (response.error || response.isChart === false) {
+                setError(response.error || "The AI detected that this image is NOT a valid financial chart. Please upload a clear price chart.");
+                return;
+            }
+
+            // Valid Analysis Received
             if (!session) {
                 const newCount = usageCount + 1;
                 setUsageCount(newCount);
@@ -53,19 +65,19 @@ const ChartAnalyzer = () => {
             }
 
             setResult({
-                signal: "BUY",
-                confidence: "87%",
-                entry: "$42,350 - $42,500",
-                sl: "$41,200",
-                tp: "$45,800",
-                strategies: [
-                    { name: "9/20 EMA", status: "Bullish Crossover", detail: "9 EMA crossed above 20 EMA, indicating a strong upward trend initiation." },
-                    { name: "RSI Divergence", status: "Hidden Bullish", detail: "RSI making higher lows while price makes lower lows, suggesting continuation." },
-                    { name: "Williams Alligator", status: "Awakening", detail: "Jaw, Teeth, and Lips are separating upwards." },
-                    { name: "Volume Analysis", status: "Accumulation", detail: "Significant volume spike accompanying the recent support bounce." }
-                ]
+                signal: response.signal,
+                confidence: response.confidence,
+                entry: response.entry,
+                sl: response.sl,
+                tp: response.tp,
+                strategies: response.strategies
             });
-        }, 3500);
+
+        } catch (err) {
+            setAnalyzing(false);
+            console.error("Client Error:", err);
+            setError("Analysis failed. Please check your connection or try a smaller image.");
+        }
     };
 
     return (
@@ -148,6 +160,13 @@ const ChartAnalyzer = () => {
                                 </span>
                             </div>
                         )}
+
+                        {error && (
+                            <div className="mt-6 mx-auto max-w-sm bg-rose-500/10 border border-rose-500/20 text-rose-400 px-4 py-3 rounded-xl flex items-center gap-3 text-sm text-left">
+                                <AlertTriangle className="shrink-0" size={18} />
+                                <span>{error}</span>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div className="relative p-6">
@@ -164,6 +183,13 @@ const ChartAnalyzer = () => {
                                 <X size={20} />
                             </button>
                         </div>
+
+                        {error && (
+                            <div className="mt-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 px-4 py-3 rounded-xl flex items-center gap-3 text-sm text-left animate-in fade-in slide-in-from-top-2">
+                                <AlertTriangle className="shrink-0" size={18} />
+                                <span>{error}</span>
+                            </div>
+                        )}
 
                         {!result && (
                             <div className="mt-6 flex justify-center">
