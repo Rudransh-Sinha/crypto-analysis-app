@@ -32,57 +32,18 @@ export async function analyzeChartImage(imageBase64) {
         // Simulate validation delay
         await new Promise(resolve => setTimeout(resolve, 2500));
 
-        // STEP 2-4: Advanced validation happens client-side
-        // This is a placeholder - actual validation done in ChartAnalyzer component
-        // Server just does basic checks and generates analysis
-
-        // Generate realistic randomized analysis
-        const signals = ['BUY', 'SELL', 'NEUTRAL'];
-        const signal = signals[Math.floor(Math.random() * signals.length)];
-        const confidence = (75 + Math.floor(Math.random() * 20)) + '%';
-
-        const basePrice = 40000 + Math.floor(Math.random() * 10000);
-        const entry = `$${basePrice.toLocaleString()} - $${(basePrice + 500).toLocaleString()}`;
-        const sl = `$${(basePrice - 1500).toLocaleString()}`;
-        const tp = `$${(basePrice + 3000).toLocaleString()}`;
-
-        const strategies = [
-            {
-                name: "9/20 EMA",
-                status: signal === 'BUY' ? "Bullish Crossover" : "Bearish Crossover",
-                detail: signal === 'BUY'
-                    ? "9 EMA crossed above 20 EMA, indicating upward momentum."
-                    : "9 EMA crossed below 20 EMA, indicating downward pressure."
-            },
-            {
-                name: "RSI Indicator",
-                status: signal === 'BUY' ? "Oversold Recovery" : "Overbought Zone",
-                detail: signal === 'BUY'
-                    ? "RSI bouncing from oversold territory, suggesting potential reversal."
-                    : "RSI approaching overbought levels, caution advised."
-            },
-            {
-                name: "Volume Analysis",
-                status: signal === 'NEUTRAL' ? "Low Volume" : "High Volume",
-                detail: "Recent volume spike confirms the current price action trend."
-            },
-            {
-                name: "Support/Resistance",
-                status: signal === 'BUY' ? "Support Holding" : "Resistance Test",
-                detail: signal === 'BUY'
-                    ? "Price holding above key support level with strong buying pressure."
-                    : "Price testing major resistance, watch for breakout or rejection."
-            }
-        ];
-
+        // CRITICAL: We cannot generate accurate signals without real AI/OCR
+        // Return honest message instead of fake data
         return {
-            isChart: true,
-            signal,
-            confidence,
-            entry,
-            sl,
-            tp,
-            strategies: strategies.slice(0, 4)
+            isChart: false,
+            error: "⚠️ Real-time AI analysis is currently unavailable.\n\n" +
+                "To get accurate trading signals:\n" +
+                "1. Manually analyze the chart using technical indicators\n" +
+                "2. Check support/resistance levels\n" +
+                "3. Verify trend direction with moving averages\n" +
+                "4. Use RSI/MACD for entry confirmation\n\n" +
+                "We cannot generate signals without reading the actual price from your chart. " +
+                "Showing fake numbers would be misleading and dangerous for trading decisions."
         };
 
     } catch (error) {
