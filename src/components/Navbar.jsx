@@ -36,7 +36,7 @@ const Navbar = () => {
                 <div className="flex items-center gap-4">
                     {/* Mobile Menu Button */}
                     <button
-                        className="md:hidden p-2 -ml-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                        className="md:hidden p-2 -ml-2 text-white bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors shadow-lg"
                         onClick={() => setIsMobileMenuOpen(true)}
                         aria-label="Open Menu"
                     >
