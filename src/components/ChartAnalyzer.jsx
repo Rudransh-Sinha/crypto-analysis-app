@@ -247,6 +247,36 @@ const ChartAnalyzer = () => {
                             className="bg-[#0b0e14] border-t border-[#1e2330]"
                         >
                             <div className="p-8">
+                                {/* Disclaimer Banner */}
+                                {result.disclaimer && (
+                                    <div className="mb-6 bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex items-start gap-3">
+                                        <AlertTriangle className="text-amber-500 shrink-0 mt-0.5" size={18} />
+                                        <p className="text-amber-200 text-sm">{result.disclaimer}</p>
+                                    </div>
+                                )}
+
+                                {/* Chart Info */}
+                                {result.ticker && (
+                                    <div className="mb-6 flex flex-wrap gap-3">
+                                        <div className="bg-[#131720] border border-[#2a3040] rounded-lg px-4 py-2">
+                                            <span className="text-slate-400 text-xs">Ticker:</span>
+                                            <span className="text-white font-bold ml-2">{result.ticker}</span>
+                                        </div>
+                                        {result.detectedPrice && (
+                                            <div className="bg-[#131720] border border-[#2a3040] rounded-lg px-4 py-2">
+                                                <span className="text-slate-400 text-xs">Detected Price:</span>
+                                                <span className="text-white font-bold ml-2">${result.detectedPrice.toLocaleString()}</span>
+                                            </div>
+                                        )}
+                                        {result.timeframe && (
+                                            <div className="bg-[#131720] border border-[#2a3040] rounded-lg px-4 py-2">
+                                                <span className="text-slate-400 text-xs">Timeframe:</span>
+                                                <span className="text-white font-bold ml-2">{result.timeframe}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                                     {/* Signal Card */}
                                     <div className="bg-[#131720] border border-emerald-500/30 rounded-2xl p-6 relative overflow-hidden group">
